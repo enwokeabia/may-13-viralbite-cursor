@@ -1,43 +1,260 @@
-import Link from 'next/link';
+"use client";
+
+import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useAuth } from '@/lib/contexts/AuthContext';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase/firebase';
 
 export default function Home() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialRole = searchParams.get('role') || 'influencer';
+  const { signUp, signIn } = useAuth();
+  const [showLogin, setShowLogin] = useState(true);
+  const [loginUsername, setLoginUsername] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState(initialRole);
+  const [fullName, setFullName] = useState('');
+  const [restaurantName, setRestaurantName] = useState('');
+  const [restaurantLocation, setRestaurantLocation] = useState('');
+  const [username, setUsername] = useState('');
+  const [instagramUsername, setInstagramUsername] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoginError('');
+    setLoginLoading(true);
+    try {
+      let emailToUse = loginUsername;
+      if (!loginUsername.includes('@')) {
+        // Lookup email by username
+        const usersRef = await getDoc(doc(db, 'usernames', loginUsername));
+        if (!usersRef.exists()) {
+          setLoginError('No user found with that username');
+          setLoginLoading(false);
+          return;
+        }
+        emailToUse = usersRef.data().email;
+        if (!emailToUse) {
+          setLoginError('No email found for this user');
+          setLoginLoading(false);
+          return;
+        }
+      }
+      // Sign in with email and password
+      const userCredential = await signIn(emailToUse, loginPassword);
+      const user = userCredential.user;
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      const role = userDoc.data()?.role;
+      if (role === 'restaurant') router.push('/restaurant');
+      else if (role === 'influencer') router.push('/influencer');
+      else if (role === 'admin') router.push('/admin');
+      else router.push('/');
+    } catch (err: any) {
+      setLoginError(err.message || 'Failed to sign in');
+    } finally {
+      setLoginLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      const userCredential = await signUp(email, password);
+      const userData: any = {
+        email: userCredential.user.email,
+        role,
+        username,
+        fullName,
+        createdAt: new Date().toISOString(),
+      };
+      if (role === "restaurant") {
+        userData.restaurantName = restaurantName;
+        userData.restaurantLocation = restaurantLocation;
+      }
+      if (role === "influencer") {
+        userData.instagramUsername = instagramUsername;
+      }
+      await setDoc(doc(db, 'users', userCredential.user.uid), userData);
+      // Save username-to-email mapping for login
+      await setDoc(doc(db, 'usernames', username), { email, uid: userCredential.user.uid });
+      router.push(`/${role}`);
+    } catch (err: any) {
+      setError(err.message || 'Failed to create account');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f5eafe] via-[#f3f0ff] to-white">
-      <div className="w-full max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-center gap-8 p-4 md:p-0">
-        {/* Left Card: Logo, tagline, CTA */}
-        <div className="bg-white/90 rounded-2xl shadow-xl p-8 md:w-1/2 w-full flex flex-col items-center">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-fuchsia-500 mb-2">ViralBite</h1>
-          <p className="text-lg text-gray-700 mb-6 text-center font-medium">Performance-Based Restaurant-Influencer Marketing</p>
-          <div className="w-full flex flex-col gap-4">
-            <Link href="/auth/login" aria-label="Log in to ViralBite" className="w-full bg-gradient-to-r from-purple-600 to-fuchsia-500 text-white font-semibold py-3 rounded-lg shadow hover:from-fuchsia-500 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-colors text-center">Log in</Link>
-            <Link href="/auth/signup" aria-label="Sign up for ViralBite" className="w-full border-2 border-purple-500 text-purple-700 font-semibold py-3 rounded-lg hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-400 transition-colors text-center">Sign up</Link>
-          </div>
-          <p className="mt-6 text-sm text-gray-500">Don&apos;t have an account? <Link href="/auth/signup" className="underline text-purple-600">Sign up</Link></p>
+    <main className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="w-full max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-center gap-8 py-8">
+        <div className="w-full md:w-1/2 bg-white rounded-2xl shadow-xl p-8 flex flex-col justify-center">
+          <h1 className="text-4xl font-extrabold text-purple-700 text-center mb-1">ViralBite</h1>
+          <p className="text-center text-gray-500 mb-6">Performance-Based Restaurant-Influencer Marketing</p>
+          {showLogin ? (
+            <>
+              <h2 className="text-xl font-bold text-gray-900 mb-2 text-left">Log in to your account</h2>
+              <form className="space-y-4" onSubmit={handleLogin}>
+                <input
+                  type="text"
+                  required
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  placeholder="Username"
+                  value={loginUsername}
+                  onChange={e => setLoginUsername(e.target.value)}
+                />
+                <input
+                  type="password"
+                  required
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  placeholder="Password"
+                  value={loginPassword}
+                  onChange={e => setLoginPassword(e.target.value)}
+                />
+                {loginError && <div className="text-red-500 text-sm text-center mt-2">{loginError}</div>}
+                <button
+                  type="submit"
+                  disabled={loginLoading}
+                  className="w-full py-3 mt-2 rounded-lg bg-gradient-to-r from-purple-600 to-purple-500 text-white font-semibold text-lg shadow hover:from-purple-700 hover:to-purple-600 transition-all duration-150"
+                >
+                  {loginLoading ? 'Logging in...' : 'Log in'}
+                </button>
+              </form>
+              <div className="text-center mt-4">
+                <button
+                  className="text-purple-700 hover:underline text-sm font-medium"
+                  onClick={() => setShowLogin(false)}
+                >
+                  Don&apos;t have an account? Sign up
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <h2 className="text-xl font-bold text-gray-900 mb-2 text-left">Create your account</h2>
+              <form className="space-y-4" onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  required
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  placeholder="Full Name"
+                  value={fullName}
+                  onChange={e => setFullName(e.target.value)}
+                />
+                {role === "restaurant" && (
+                  <>
+                    <input
+                      type="text"
+                      required
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      placeholder="Restaurant Name"
+                      value={restaurantName}
+                      onChange={e => setRestaurantName(e.target.value)}
+                    />
+                    <input
+                      type="text"
+                      required
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      placeholder="City / Location"
+                      value={restaurantLocation}
+                      onChange={e => setRestaurantLocation(e.target.value)}
+                    />
+                  </>
+                )}
+                <input
+                  type="text"
+                  required
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  placeholder="Username"
+                  value={username}
+                  onChange={e => setUsername(e.target.value)}
+                />
+                {role === "influencer" && (
+                  <input
+                    type="text"
+                    required
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    placeholder="Instagram Username"
+                    value={instagramUsername}
+                    onChange={e => setInstagramUsername(e.target.value)}
+                  />
+                )}
+                <input
+                  type="email"
+                  required
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  placeholder="Email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                />
+                <input
+                  type="password"
+                  required
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  placeholder="Password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                />
+                <div className="flex justify-center gap-4 mb-4">
+                  <button
+                    type="button"
+                    className={`flex-1 flex flex-col items-center border rounded-xl py-3 px-2 transition-all duration-150 ${role === 'restaurant' ? 'bg-purple-50 border-purple-600 text-purple-700 font-semibold shadow' : 'bg-white border-gray-300 text-gray-500'} hover:border-purple-400`}
+                    onClick={() => setRole('restaurant')}
+                  >
+                    <span className="text-2xl mb-1">🍽️</span>
+                    Restaurant
+                  </button>
+                  <button
+                    type="button"
+                    className={`flex-1 flex flex-col items-center border rounded-xl py-3 px-2 transition-all duration-150 ${role === 'influencer' ? 'bg-purple-50 border-purple-600 text-purple-700 font-semibold shadow' : 'bg-white border-gray-300 text-gray-500'} hover:border-purple-400`}
+                    onClick={() => setRole('influencer')}
+                  >
+                    <span className="text-2xl mb-1">👤</span>
+                    Influencer
+                  </button>
+                </div>
+                {error && (
+                  <div className="text-red-500 text-sm text-center mt-2">{error}</div>
+                )}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full py-3 mt-2 rounded-lg bg-purple-700 text-white font-semibold text-lg shadow hover:bg-purple-800 transition-all duration-150"
+                >
+                  {loading ? 'Creating account...' : 'Create Account'}
+                </button>
+              </form>
+              <div className="text-center mt-4">
+                <button
+                  className="text-purple-700 hover:underline text-sm font-medium"
+                  onClick={() => setShowLogin(true)}
+                >
+                  Already have an account? Log in
+                </button>
+              </div>
+            </>
+          )}
         </div>
-        {/* Right Card: Marketing/Benefits */}
-        <div className="bg-gradient-to-br from-purple-600 to-fuchsia-500 rounded-2xl shadow-xl p-8 md:w-1/2 w-full flex flex-col justify-center text-white">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">Amplify Your Restaurant&apos;s Impact</h2>
-          <p className="mb-6 text-lg">Connect with influencers to create performance-based marketing campaigns that drive real results. Track views, engagement, and calculate ROI in real-time.</p>
-          <ul className="space-y-4">
-            <li className="flex items-center gap-3">
-              <span className="inline-block bg-white/20 rounded-full p-2" aria-hidden="true">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m4 4h1a2 2 0 002-2v-5a2 2 0 00-2-2h-1.5M7 16H6a2 2 0 01-2-2v-5a2 2 0 012-2h1.5" /></svg>
-              </span>
-              <span>Track real-time performance metrics for all your campaigns</span>
-            </li>
-            <li className="flex items-center gap-3">
-              <span className="inline-block bg-white/20 rounded-full p-2" aria-hidden="true">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              </span>
-              <span>Pay only for actual views and engagement with your content</span>
-            </li>
-            <li className="flex items-center gap-3">
-              <span className="inline-block bg-white/20 rounded-full p-2" aria-hidden="true">
-                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M9 20H4v-2a3 3 0 015.356-1.857M15 11a4 4 0 10-6 0" /></svg>
-              </span>
-              <span>Connect with authentic influencers who align with your brand values</span>
-            </li>
-          </ul>
+        <div className="hidden md:flex flex-col items-center justify-center w-1/2">
+          <div className="w-full max-w-md bg-gradient-to-br from-purple-700 via-purple-500 to-purple-400 rounded-2xl shadow-xl p-8 text-white flex flex-col gap-4">
+            <h2 className="text-2xl font-bold mb-2">Amplify Your Restaurant's Impact</h2>
+            <p className="mb-4">Connect with influencers to create performance-based marketing campaigns that drive real results. Track views, engagement, and calculate ROI in real-time.</p>
+            <ul className="space-y-3">
+              <li className="flex items-center gap-3"><span className="text-2xl">📊</span> Track real-time performance metrics for all your campaigns</li>
+              <li className="flex items-center gap-3"><span className="text-2xl">💸</span> Pay only for actual views and engagement with your content</li>
+              <li className="flex items-center gap-3"><span className="text-2xl">🤝</span> Connect with authentic influencers who align with your brand values</li>
+            </ul>
+          </div>
         </div>
       </div>
     </main>

@@ -42,7 +42,7 @@ export default function SubmissionManagement() {
       const metricsObj: { [id: string]: { views: number; likes: number; earnings: number } } = {};
       for (const s of subs) {
         const metrics = await getMetricsBySubmission(s.id!);
-        const campaign = campaignsData.find((c: Campaign) => c.id === s.campaign_id);
+        const campaign = campaignsData.find((c: Campaign) => c.id === s.campaignId);
         const rewardRate = campaign?.reward_rate ?? 0;
         const views = metrics?.views ?? s.views ?? 0;
         const likes = metrics?.likes ?? 0;
@@ -147,10 +147,10 @@ export default function SubmissionManagement() {
         <tbody>
           {submissions.map((s) => (
             <tr key={s.id} className="text-center">
-              <td className="px-4 py-2 border-b">{campaignMap[s.campaign_id] || "Campaign"}</td>
-              <td className="px-4 py-2 border-b">{userMap[s.influencer_id] || s.influencer_id}</td>
+              <td className="px-4 py-2 border-b">{campaignMap[s.campaignId] || "Campaign"}</td>
+              <td className="px-4 py-2 border-b">{userMap[s.influencerId] || s.influencerId}</td>
               <td className="px-4 py-2 border-b">
-                <a href={s.video_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline break-all">{s.video_url}</a>
+                <a href={s.contentUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline break-all">{s.contentUrl}</a>
               </td>
               <td className="px-4 py-2 border-b">
                 <span className={`text-xs px-2 py-1 rounded ${s.status === 'approved' ? 'bg-green-100 text-green-700' : s.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>{s.status.charAt(0).toUpperCase() + s.status.slice(1)}</span>
@@ -182,7 +182,7 @@ export default function SubmissionManagement() {
                 </button>
                 <button
                   className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-                  onClick={() => handleOpenMetrics(s.id!, s.campaign_id)}
+                  onClick={() => handleOpenMetrics(s.id!, s.campaignId)}
                 >
                   Edit Metrics
                 </button>

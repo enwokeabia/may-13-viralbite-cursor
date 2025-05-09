@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { auth } from "@/lib/firebase/firebase";
 import { getCampaignsByRestaurant, updateCampaign, deleteCampaign, Campaign } from "@/lib/firebase/firebaseUtils";
 import { MagnifyingGlassIcon, PlusIcon, MegaphoneIcon } from '@heroicons/react/24/outline';
+import CampaignForm from "../CampaignForm";
 
 export default function RestaurantCampaignsPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -11,6 +12,7 @@ export default function RestaurantCampaignsPage() {
   const [error, setError] = useState("");
   const [updating, setUpdating] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchCampaigns = async () => {
@@ -55,6 +57,23 @@ export default function RestaurantCampaignsPage() {
     }
   };
 
+  const handleCreated = async () => {
+    setModalOpen(false);
+    // Refresh campaigns after creation
+    setLoading(true);
+    setError("");
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error("You must be logged in to view campaigns.");
+      const data = await getCampaignsByRestaurant(user.uid);
+      setCampaigns(data);
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch campaigns");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) return <div className="text-center text-gray-500 py-4">Loading campaigns...</div>;
   if (error) return <div className="text-center text-red-500 py-4">{error}</div>;
   return (
@@ -65,11 +84,29 @@ export default function RestaurantCampaignsPage() {
             <h1 className="text-2xl md:text-3xl font-bold text-purple-700 mb-1">Campaigns</h1>
             <p className="text-gray-600 text-sm">Create and manage your promotional campaigns</p>
           </div>
-          <button className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded shadow hover:bg-purple-700 text-sm self-start md:self-auto">
+          <button
+            className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded shadow hover:bg-purple-700 text-sm self-start md:self-auto"
+            onClick={() => setModalOpen(true)}
+          >
             <PlusIcon className="h-5 w-5" />
             Create Campaign
           </button>
         </div>
+        {/* Modal for campaign creation */}
+        {modalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
+              <button
+                className="absolute top-2 right-2 text-gray-400 hover:text-gray-700 text-2xl"
+                onClick={() => setModalOpen(false)}
+                aria-label="Close"
+              >
+                &times;
+              </button>
+              <CampaignForm onCreated={handleCreated} />
+            </div>
+          </div>
+        )}
         <div className="flex flex-col md:flex-row gap-2 mb-6">
           <div className="flex-1 flex items-center bg-white border rounded px-3 py-2 shadow-sm">
             <MagnifyingGlassIcon className="h-5 w-5 text-gray-400 mr-2" />

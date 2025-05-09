@@ -161,3 +161,18 @@ export const getUserById = async (uid: string) => {
   const userDoc = await getDoc(doc(db, 'users', uid));
   return userDoc.exists() ? { id: userDoc.id, ...userDoc.data() } : null;
 };
+
+// Normalization function for mixed-case Firestore data
+export function normalizeSubmission(doc: any): Submission {
+  return {
+    id: doc.id || doc.id1 || doc.id2, // fallback if needed
+    campaignId: doc.campaignId || doc.campaign_id,
+    influencerId: doc.influencerId || doc.influencer_id,
+    contentUrl: doc.contentUrl || doc.video_url,
+    status: doc.status,
+    views: doc.views ?? 0,
+    likes: doc.likes ?? 0,
+    earnings: doc.earnings ?? 0,
+    // Only return fields defined in Submission interface
+  };
+}
