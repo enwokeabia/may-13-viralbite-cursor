@@ -49,51 +49,49 @@ export default function RestaurantDashboard() {
   const totalSpent = submissions.reduce((sum, s) => sum + (s.earnings ?? 0), 0);
 
   return (
-    <main className="min-h-screen flex flex-col items-center bg-white">
-      <div className="w-full max-w-5xl mx-auto p-4 md:p-8">
-        <h1 className="text-3xl font-bold text-purple-700 mb-1">Dashboard</h1>
-        <p className="text-gray-600 mb-8">Overview of your campaigns and performance</p>
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-          <div className="bg-white rounded shadow p-4 flex flex-col items-start h-32 justify-between">
+    <main className="min-h-screen flex flex-col items-center bg-[#f7f7fa]">
+      <div className="w-full max-w-5xl mx-auto px-4 md:px-8 py-8">
+        {/* Header Area */}
+        <div className="mb-8 pb-4 border-b border-gray-200">
+          <h1 className="text-3xl font-bold text-gray-900 mb-1 text-left">Dashboard</h1>
+          <p className="text-gray-500 text-base text-left">Overview of your campaigns and performance</p>
+        </div>
+        {/* Stats Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-10">
+          <div className="bg-white rounded-xl shadow-sm p-6 flex flex-col items-start justify-between min-h-[110px]">
+            <span className="text-sm text-gray-500 font-medium mb-2">Active Campaigns</span>
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-100"><MegaphoneIcon className="h-5 w-5 text-purple-600" /></span>
-              <span className="text-xs text-gray-500 font-medium">Active Campaigns</span>
+              <span className="text-3xl font-bold text-purple-700">{activeCampaigns}</span>
             </div>
-            <div className="text-2xl font-bold text-purple-700 mt-2">{activeCampaigns}</div>
           </div>
-          <div className="bg-white rounded shadow p-4 flex flex-col items-start h-32 justify-between">
+          <div className="bg-white rounded-xl shadow-sm p-6 flex flex-col items-start justify-between min-h-[110px]">
+            <span className="text-sm text-gray-500 font-medium mb-2">Total Submissions</span>
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-100"><DocumentTextIcon className="h-5 w-5 text-purple-600" /></span>
-              <span className="text-xs text-gray-500 font-medium">Total Submissions</span>
+              <span className="text-3xl font-bold text-purple-700">{totalSubmissions}</span>
             </div>
-            <div className="text-2xl font-bold text-purple-700 mt-2">{totalSubmissions}</div>
           </div>
-          <div className="bg-white rounded shadow p-4 flex flex-col items-start h-32 justify-between">
+          <div className="bg-white rounded-xl shadow-sm p-6 flex flex-col items-start justify-between min-h-[110px]">
+            <span className="text-sm text-gray-500 font-medium mb-2">Total Views</span>
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-100"><EyeIcon className="h-5 w-5 text-purple-600" /></span>
-              <span className="text-xs text-gray-500 font-medium">Total Views</span>
+              <span className="text-3xl font-bold text-purple-700">{totalViews}</span>
             </div>
-            <div className="text-2xl font-bold text-purple-700 mt-2">{totalViews}</div>
           </div>
-          <div className="bg-white rounded shadow p-4 flex flex-col items-start h-32 justify-between">
+          <div className="bg-white rounded-xl shadow-sm p-6 flex flex-col items-start justify-between min-h-[110px]">
+            <span className="text-sm text-gray-500 font-medium mb-2">Total Likes</span>
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-100"><HeartIcon className="h-5 w-5 text-purple-600" /></span>
-              <span className="text-xs text-gray-500 font-medium">Total Likes</span>
+              <span className="text-3xl font-bold text-purple-700">{totalLikes}</span>
             </div>
-            <div className="text-2xl font-bold text-purple-700 mt-2">{totalLikes}</div>
           </div>
-          <div className="bg-white rounded shadow p-4 flex flex-col items-start h-32 justify-between">
+          <div className="bg-white rounded-xl shadow-sm p-6 flex flex-col items-start justify-between min-h-[110px]">
+            <span className="text-sm text-gray-500 font-medium mb-2">Total Spent</span>
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-100"><CurrencyDollarIcon className="h-5 w-5 text-purple-600" /></span>
-              <span className="text-xs text-gray-500 font-medium">Total Spent</span>
+              <span className="text-3xl font-bold text-purple-700">${totalSpent.toFixed(2)}</span>
             </div>
-            <div className="text-2xl font-bold text-purple-700 mt-2">${totalSpent.toFixed(2)}</div>
           </div>
         </div>
-        {/* Recent Submissions */}
-        <div className="bg-white rounded shadow p-6 mt-8">
-          <h2 className="text-lg font-semibold mb-2 text-gray-900">Recent Submissions</h2>
+        {/* Recent Submissions Section */}
+        <div className="bg-white rounded-xl shadow-sm p-6 mt-8 border border-gray-100">
+          <h2 className="text-lg font-semibold mb-4 text-gray-900 text-left">Recent Submissions</h2>
           {loading && <div className="text-gray-500">Loading submissions...</div>}
           {error && <div className="text-red-500">{error}</div>}
           {!loading && submissions.length === 0 && (
@@ -103,12 +101,12 @@ export default function RestaurantDashboard() {
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
                 <thead>
-                  <tr className="border-b border-gray-200 bg-gray-50">
+                  <tr className="border-b border-gray-100 bg-gray-50">
                     <th className="px-3 py-2 text-left font-semibold text-gray-700 whitespace-nowrap">Campaign</th>
                     <th className="px-3 py-2 text-left font-semibold text-gray-700 whitespace-nowrap">Influencer</th>
-                    <th className="px-3 py-2 text-center font-semibold text-gray-700 whitespace-nowrap">Status</th>
-                    <th className="px-3 py-2 text-center font-semibold text-gray-700 whitespace-nowrap">Views</th>
-                    <th className="px-3 py-2 text-center font-semibold text-gray-700 whitespace-nowrap">Likes</th>
+                    <th className="px-3 py-2 text-left font-semibold text-gray-700 whitespace-nowrap">Status</th>
+                    <th className="px-3 py-2 text-left font-semibold text-gray-700 whitespace-nowrap">Views</th>
+                    <th className="px-3 py-2 text-left font-semibold text-gray-700 whitespace-nowrap">Likes</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -117,12 +115,12 @@ export default function RestaurantDashboard() {
                       key={sub.id}
                       className={
                         idx % 2 === 0
-                          ? "bg-white border-b border-gray-100"
+                          ? "bg-white border-b border-gray-50"
                           : "bg-gray-50 border-b border-gray-100"
                       }
                     >
                       {/* Campaign Name (truncate, tooltip) */}
-                      <td className="px-3 py-2 max-w-[160px]">
+                      <td className="px-3 py-2 max-w-[160px] text-gray-900">
                         <span
                           className="font-medium text-purple-700 truncate block cursor-pointer"
                           title={campaignMap[sub.campaignId] || sub.campaignId}
@@ -133,7 +131,7 @@ export default function RestaurantDashboard() {
                         </span>
                       </td>
                       {/* Influencer (truncate, tooltip) */}
-                      <td className="px-3 py-2 max-w-[160px]">
+                      <td className="px-3 py-2 max-w-[160px] text-gray-900">
                         <span
                           className="font-medium text-blue-700 truncate block cursor-pointer"
                           title={sub.influencerId || "N/A"}
@@ -142,7 +140,7 @@ export default function RestaurantDashboard() {
                         </span>
                       </td>
                       {/* Status */}
-                      <td className="px-3 py-2 text-center">
+                      <td className="px-3 py-2 text-left">
                         <span
                           className={`text-xs px-2 py-1 rounded font-semibold ${
                             sub.status === "approved"
@@ -156,11 +154,11 @@ export default function RestaurantDashboard() {
                         </span>
                       </td>
                       {/* Views */}
-                      <td className="px-3 py-2 text-center">
+                      <td className="px-3 py-2 text-left text-gray-900">
                         {sub.views ?? "N/A"}
                       </td>
                       {/* Likes */}
-                      <td className="px-3 py-2 text-center">
+                      <td className="px-3 py-2 text-left text-gray-900">
                         {sub.likes ?? "N/A"}
                       </td>
                     </tr>
