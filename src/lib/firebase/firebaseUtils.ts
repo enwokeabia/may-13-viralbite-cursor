@@ -17,7 +17,7 @@ import {
   where,
   getDoc,
 } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { ref, uploadBytesResumable, getDownloadURL, UploadTaskSnapshot } from "firebase/storage";
 
 // Auth functions
 export const logoutUser = () => signOut(auth);
@@ -52,9 +52,24 @@ export const deleteDocument = (collectionName: string, id: string) =>
   deleteDoc(doc(db, collectionName, id));
 
 // Storage functions
-export const uploadFile = async (file: File, path: string) => {
+export const uploadFile = async (file: File, path: string, onProgress?: (progress: number) => void) => {
   const storageRef = ref(storage, path);
-  await uploadBytes(storageRef, file);
+  const uploadTask = uploadBytesResumable(storageRef, file);
+  
+  if (onProgress) {
+    uploadTask.on('state_changed',
+      (snapshot: UploadTaskSnapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        onProgress(progress);
+      },
+      (error: Error) => {
+        console.error('Upload error:', error);
+        throw error;
+      }
+    );
+  }
+  
+  await uploadTask;
   return getDownloadURL(storageRef);
 };
 

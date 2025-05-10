@@ -43,15 +43,10 @@ export default function RestaurantDashboard() {
   // Aggregate metrics
   const activeCampaigns = campaigns.filter((c) => c.active_status).length;
   const totalSubmissions = submissions.length;
-  const totalViews = submissions.reduce((sum, s) => sum + (s.metrics?.views ?? 0), 0);
-  const totalLikes = submissions.reduce((sum, s) => sum + (s.metrics?.likes ?? 0), 0);
-  // Calculate total spent from views and reward rate
-  const totalSpent = submissions.reduce((sum, s) => {
-    const campaign = campaigns.find(c => c.id === s.campaignId);
-    const rewardRate = campaign?.reward_rate ?? 0;
-    const views = s.metrics?.views ?? 0;
-    return sum + Math.round((views * rewardRate) / 1000 * 100) / 100;
-  }, 0);
+  const totalViews = submissions.reduce((sum, s) => sum + (s.views ?? 0), 0);
+  const totalLikes = submissions.reduce((sum, s) => sum + (s.likes ?? 0), 0);
+  // Calculate total spent from earnings field
+  const totalSpent = submissions.reduce((sum, s) => sum + (s.earnings ?? 0), 0);
 
   return (
     <main className="min-h-screen flex flex-col items-center bg-white">
@@ -162,11 +157,11 @@ export default function RestaurantDashboard() {
                       </td>
                       {/* Views */}
                       <td className="px-3 py-2 text-center">
-                        {sub.metrics?.views ?? "N/A"}
+                        {sub.views ?? "N/A"}
                       </td>
                       {/* Likes */}
                       <td className="px-3 py-2 text-center">
-                        {sub.metrics?.likes ?? "N/A"}
+                        {sub.likes ?? "N/A"}
                       </td>
                     </tr>
                   ))}

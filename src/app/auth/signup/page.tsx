@@ -201,7 +201,7 @@ export default function SignupPage() {
                   <input
                     type="text"
                     required
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-400"
                     placeholder="Full Name"
                     value={fullName}
                     onChange={e => setFullName(e.target.value)}
@@ -211,7 +211,7 @@ export default function SignupPage() {
                       <input
                         type="text"
                         required
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-400"
                         placeholder="Restaurant Name"
                         value={restaurantName}
                         onChange={e => setRestaurantName(e.target.value)}
@@ -219,7 +219,7 @@ export default function SignupPage() {
                       <input
                         type="text"
                         required
-                        className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                        className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-400"
                         placeholder="City / Location"
                         value={restaurantLocation}
                         onChange={e => setRestaurantLocation(e.target.value)}
@@ -229,7 +229,7 @@ export default function SignupPage() {
                   <input
                     type="text"
                     required
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-400"
                     placeholder="Username"
                     value={username}
                     onChange={e => setUsername(e.target.value)}
@@ -238,7 +238,7 @@ export default function SignupPage() {
                     <input
                       type="text"
                       required
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-400"
                       placeholder="Instagram Username"
                       value={instagramUsername}
                       onChange={e => setInstagramUsername(e.target.value)}
@@ -247,7 +247,7 @@ export default function SignupPage() {
                   <input
                     type="email"
                     required
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-400"
                     placeholder="Email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
@@ -255,7 +255,7 @@ export default function SignupPage() {
                   <input
                     type="password"
                     required
-                    className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-400"
                     placeholder="Password"
                     value={password}
                     onChange={e => setPassword(e.target.value)}

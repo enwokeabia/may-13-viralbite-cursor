@@ -10,7 +10,9 @@ export interface Submission {
   contentUrl: string;
   status: string;
   createdAt: any;
-  metrics?: { views: number; likes: number };
+  views: number;
+  likes: number;
+  earnings: number;
 }
 
 export function useSubmissions(constraints: QueryConstraint[] = []) {
@@ -28,7 +30,21 @@ export function useSubmissions(constraints: QueryConstraint[] = []) {
       q,
       (snapshot) => {
         setSubmissions(
-          snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Submission))
+          snapshot.docs.map((doc) => {
+            const data = doc.data();
+            return {
+              id: doc.id,
+              campaignId: data.campaignId,
+              restaurantId: data.restaurantId,
+              influencerId: data.influencerId,
+              contentUrl: data.contentUrl,
+              status: data.status,
+              createdAt: data.createdAt,
+              views: data.views ?? 0,
+              likes: data.likes ?? 0,
+              earnings: data.earnings ?? 0,
+            };
+          })
         );
         setLoading(false);
       },

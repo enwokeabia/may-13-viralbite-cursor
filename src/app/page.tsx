@@ -137,7 +137,7 @@ export default function Home() {
                 >
                   Don&apos;t have an account? Sign up
                 </button>
-              </div>
+      </div>
             </>
           ) : (
             <>
@@ -222,7 +222,7 @@ export default function Home() {
                     <span className="text-2xl mb-1">👤</span>
                     Influencer
                   </button>
-                </div>
+      </div>
                 {error && (
                   <div className="text-red-500 text-sm text-center mt-2">{error}</div>
                 )}
@@ -241,7 +241,7 @@ export default function Home() {
                 >
                   Already have an account? Log in
                 </button>
-              </div>
+        </div>
             </>
           )}
         </div>
@@ -254,7 +254,7 @@ export default function Home() {
               <li className="flex items-center gap-3"><span className="text-2xl">💸</span> Pay only for actual views and engagement with your content</li>
               <li className="flex items-center gap-3"><span className="text-2xl">🤝</span> Connect with authentic influencers who align with your brand values</li>
             </ul>
-          </div>
+        </div>
         </div>
       </div>
     </main>

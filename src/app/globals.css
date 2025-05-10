@@ -31,3 +31,13 @@ body {
     text-wrap: balance;
   }
 }
+
+/* Ensure input text is always visible */
+input, textarea, select {
+  @apply text-gray-900;
+}
+
+/* Ensure placeholder text is visible but slightly muted */
+input::placeholder, textarea::placeholder {
+  @apply text-gray-500;
+}
