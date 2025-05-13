@@ -15,7 +15,7 @@ export default function AdminDashboard() {
     getDocuments("campaigns").then((data) => setCampaigns(data as Campaign[]));
   }, []);
 
-  const { submissions, loading, error } = useSubmissions();
+  const { submissions, loading, error } = useSubmissions([], true);
 
   // Lookup maps
   const campaignMap = Object.fromEntries(campaigns.map(c => [c.id, c]));

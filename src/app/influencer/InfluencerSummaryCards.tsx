@@ -1,55 +1,37 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSubmissions } from "@/lib/hooks/useSubmissions";
 import { auth } from "@/lib/firebase/firebase";
-import { getSubmissionsByInfluencer, getCampaigns, getMetricsBySubmission, Submission, Campaign } from "@/lib/firebase/firebaseUtils";
+import { where } from "firebase/firestore";
 
 export default function InfluencerSummaryCards() {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [activeCount, setActiveCount] = useState(0);
-  const [totalViews, setTotalViews] = useState(0);
-  const [totalEarnings, setTotalEarnings] = useState(0);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setError("");
-      try {
-        const user = auth.currentUser;
-        if (!user) throw new Error("You must be logged in to view stats.");
-        const [subs, campaigns] = await Promise.all([
-          getSubmissionsByInfluencer(user.uid),
-          getCampaigns(),
-        ]);
-        const cmap: { [id: string]: Campaign } = {};
-        campaigns.forEach((c) => {
-          cmap[c.id!] = c;
-        });
-        let active = 0;
-        let views = 0;
-        let earnings = 0;
-        for (const s of subs) {
-          if (s.status === 'approved' || s.status === 'submitted' || s.status === 'joined' || s.status === 'pending') {
-            active++;
-          }
-          const metrics = await getMetricsBySubmission(s.id!);
-          const reward_rate = cmap[s.campaignId]?.reward_rate || 0;
-          const v = metrics?.views ?? s.views ?? 0;
-          views += v;
-          earnings += Math.round((v * reward_rate) / 1000 * 100) / 100;
-        }
-        setActiveCount(active);
-        setTotalViews(views);
-        setTotalEarnings(earnings);
-      } catch (err: any) {
-        setError(err.message || "Failed to fetch stats");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
+    const unsub = auth.onAuthStateChanged((user) => {
+      setUserId(user ? user.uid : null);
+      setIsLoading(false);
+    });
+    return () => unsub();
   }, []);
+
+  useEffect(() => {
+    console.log("Current userId:", userId);
+  }, [userId]);
+
+  // Don't try to fetch data if we're not ready with authentication
+  const { submissions, loading, error } = useSubmissions(
+    !isLoading && userId ? [where("influencerId", "==", userId)] : []
+  );
+
+  if (isLoading) return <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-6"><div className="bg-gray-100 rounded p-6 h-24 animate-pulse" /><div className="bg-gray-100 rounded p-6 h-24 animate-pulse" /><div className="bg-gray-100 rounded p-6 h-24 animate-pulse" /></div>;
+  if (!userId) return <div className="text-center text-red-500 py-4">Please log in to view your dashboard.</div>;
+
+  const activeCount = submissions.filter(s => s.status === 'approved' || s.status === 'submitted' || s.status === 'joined' || s.status === 'pending').length;
+  const totalViews = submissions.reduce((sum, s) => sum + (s.views ?? 0), 0);
+  const totalEarnings = submissions.reduce((sum, s) => sum + (s.earnings ?? 0), 0);
 
   if (loading) return <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-6"><div className="bg-gray-100 rounded p-6 h-24 animate-pulse" /><div className="bg-gray-100 rounded p-6 h-24 animate-pulse" /><div className="bg-gray-100 rounded p-6 h-24 animate-pulse" /></div>;
   if (error) return <div className="text-center text-red-500 py-4">{error}</div>;

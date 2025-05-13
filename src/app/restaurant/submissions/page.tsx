@@ -150,15 +150,9 @@ export default function RestaurantSubmissionsPage() {
                         className="font-medium text-purple-700 truncate block cursor-pointer"
                         title={campaigns.find(c => c.id === s.campaignId)?.title || s.campaignId}
                       >
-                        {(() => {
-                          const campaign = campaigns.find(c => c.id === s.campaignId);
-                          if (campaign && campaign.title) {
-                            return campaign.title.length > 32
-                              ? campaign.title.slice(0, 32) + '…'
-                              : campaign.title;
-                          }
-                          return s.campaignId || '—';
-                        })()}
+                        {(campaigns.find(c => c.id === s.campaignId)?.title || s.campaignId).length > 32
+                          ? (campaigns.find(c => c.id === s.campaignId)?.title || s.campaignId).slice(0, 32) + '…'
+                          : (campaigns.find(c => c.id === s.campaignId)?.title || s.campaignId)}
                       </span>
                     </td>
                     {/* Influencer Name (truncate, tooltip) */}
@@ -203,11 +197,11 @@ export default function RestaurantSubmissionsPage() {
                     </td>
                     {/* Views */}
                     <td className="px-3 py-2 text-center">
-                      {s.metrics?.views ?? '—'}
+                      {s.views ?? '—'}
                     </td>
                     {/* Likes */}
                     <td className="px-3 py-2 text-center">
-                      {s.metrics?.likes ?? '—'}
+                      {s.likes ?? '—'}
                     </td>
                     {/* Actions */}
                     <td className="px-3 py-2 text-center">

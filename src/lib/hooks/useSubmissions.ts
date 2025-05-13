@@ -15,15 +15,20 @@ export interface Submission {
   earnings: number;
 }
 
-export function useSubmissions(constraints: QueryConstraint[] = []) {
+export function useSubmissions(constraints: QueryConstraint[] = [], fetchAll = false) {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (constraints.length === 0 && !fetchAll) {
+      setSubmissions([]);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError(null);
-    const q = constraints.length
+    const q = constraints.length > 0
       ? query(collection(db, 'submissions'), ...constraints)
       : query(collection(db, 'submissions'));
     const unsub = onSnapshot(
@@ -54,7 +59,7 @@ export function useSubmissions(constraints: QueryConstraint[] = []) {
       }
     );
     return () => unsub();
-  }, [JSON.stringify(constraints)]);
+  }, [JSON.stringify(constraints), fetchAll]);
 
   return { submissions, loading, error };
 } 

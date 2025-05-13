@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getDocuments, getCampaigns, getSubmissions, getMetricsBySubmission, Campaign, Submission } from "@/lib/firebase/firebaseUtils";
+import { getDocuments, getCampaigns, getSubmissions, Campaign, Submission } from "@/lib/firebase/firebaseUtils";
 
 export default function AdminSummaryCards() {
   const [loading, setLoading] = useState(true);
@@ -27,8 +27,7 @@ export default function AdminSummaryCards() {
         // Aggregate views
         let views = 0;
         for (const s of submissions) {
-          const metrics = await getMetricsBySubmission(s.id!);
-          views += metrics?.views ?? s.views ?? 0;
+          views += s.views ?? 0;
         }
         setTotalViews(views);
       } catch (err: any) {

@@ -50,8 +50,11 @@ export default function SubmissionsPage() {
               <div><span className="text-xs uppercase text-gray-500 font-semibold">Campaign:</span> <span className="font-medium text-purple-700">{campaignMap[sub.campaignId] || sub.campaignId}</span></div>
               <div><span className="text-xs uppercase text-gray-500 font-semibold">Status:</span> <span className={`text-xs px-2 py-1 rounded ${sub.status === 'approved' ? 'bg-purple-100 text-purple-700' : sub.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>{sub.status}</span></div>
               <div><span className="text-xs uppercase text-gray-500 font-semibold">Content:</span> <a href={sub.contentUrl} className="text-purple-600 underline" target="_blank" rel="noopener noreferrer">View Reel</a></div>
-              {sub.metrics && (
-                <div className="text-xs text-gray-400">Views: {sub.metrics.views} | Likes: {sub.metrics.likes}</div>
+              {sub.views && (
+                <div className="text-xs text-gray-400">Views: {sub.views}</div>
+              )}
+              {sub.likes && (
+                <div className="text-xs text-gray-400">Likes: {sub.likes}</div>
               )}
             </li>
           ))}

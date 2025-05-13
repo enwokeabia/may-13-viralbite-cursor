@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { auth } from "@/lib/firebase/firebase";
-import { getSubmissionsByInfluencer, Submission, getCampaigns, getMetricsBySubmission, Campaign } from "@/lib/firebase/firebaseUtils";
+import { getSubmissionsByInfluencer, Submission, getCampaigns, Campaign } from "@/lib/firebase/firebaseUtils";
 
 interface SubmissionWithMetrics extends Submission {
   views: number;
@@ -34,23 +34,20 @@ export default function SubmissionList() {
         });
         setCampaignMap(cmap);
         // Fetch metrics for each submission
-        const subsWithMetrics = await Promise.all(
-          subs.map(async (s) => {
-            const metrics = await getMetricsBySubmission(s.id!);
-            const campaign = cmap[s.campaignId];
-            const reward_rate = campaign?.reward_rate || 0;
-            const views = metrics?.views ?? s.views ?? 0;
-            const engagement_rate = metrics?.engagement_rate ?? undefined;
-            const earnings = Math.round((views * reward_rate) / 1000 * 100) / 100 || 0;
-            return {
-              ...s,
-              views,
-              engagement_rate,
-              earnings,
-              reward_rate,
-            };
-          })
-        );
+        const subsWithMetrics = subs.map((s) => {
+          const campaign = cmap[s.campaignId];
+          const reward_rate = campaign?.reward_rate || 0;
+          const views = s.views ?? 0;
+          const engagement_rate = undefined;
+          const earnings = Math.round((views * reward_rate) / 1000 * 100) / 100 || 0;
+          return {
+            ...s,
+            views,
+            engagement_rate,
+            earnings,
+            reward_rate,
+          };
+        });
         setSubmissions(subsWithMetrics);
       } catch (err: any) {
         setError(err.message || "Failed to fetch submissions");

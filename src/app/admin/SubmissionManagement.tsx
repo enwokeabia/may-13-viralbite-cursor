@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSubmissions, updateSubmission, deleteSubmission, getCampaigns, Submission, Campaign, getMetricsBySubmission, updateMetrics, getDocuments } from "@/lib/firebase/firebaseUtils";
+import { getSubmissions, updateSubmission, deleteSubmission, getCampaigns, Submission, Campaign, getDocuments } from "@/lib/firebase/firebaseUtils";
 
 export default function SubmissionManagement() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
@@ -15,7 +15,6 @@ export default function SubmissionManagement() {
   const [metricsLoading, setMetricsLoading] = useState(false);
   const [metricsError, setMetricsError] = useState("");
   const [userMap, setUserMap] = useState<{ [id: string]: string }>({});
-  const [metricsMap, setMetricsMap] = useState<{ [id: string]: { views: number; likes: number; earnings: number } }>({});
 
   const fetchAllData = async () => {
     setLoading(true);
@@ -38,18 +37,6 @@ export default function SubmissionManagement() {
         umap[u.id] = u.username || u.email || u.id;
       });
       setUserMap(umap);
-      // Fetch metrics for all submissions
-      const metricsObj: { [id: string]: { views: number; likes: number; earnings: number } } = {};
-      for (const s of subs) {
-        const metrics = await getMetricsBySubmission(s.id!);
-        const campaign = campaignsData.find((c: Campaign) => c.id === s.campaignId);
-        const rewardRate = campaign?.reward_rate ?? 0;
-        const views = metrics?.views ?? s.views ?? 0;
-        const likes = metrics?.likes ?? 0;
-        const earnings = Math.round((views * rewardRate) / 1000 * 100) / 100;
-        metricsObj[s.id!] = { views, likes, earnings };
-      }
-      setMetricsMap(metricsObj);
     } catch (err: any) {
       setError(err.message || "Failed to fetch submissions");
     } finally {
@@ -155,9 +142,9 @@ export default function SubmissionManagement() {
               <td className="px-4 py-2 border-b">
                 <span className={`text-xs px-2 py-1 rounded ${s.status === 'approved' ? 'bg-green-100 text-green-700' : s.status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'}`}>{s.status.charAt(0).toUpperCase() + s.status.slice(1)}</span>
               </td>
-              <td className="px-4 py-2 border-b">{metricsMap[s.id!]?.views ?? 0}</td>
-              <td className="px-4 py-2 border-b">{metricsMap[s.id!]?.likes ?? 0}</td>
-              <td className="px-4 py-2 border-b">${metricsMap[s.id!]?.earnings?.toFixed(2) ?? '0.00'}</td>
+              <td className="px-4 py-2 border-b">{s.views ?? 0}</td>
+              <td className="px-4 py-2 border-b">{s.likes ?? 0}</td>
+              <td className="px-4 py-2 border-b">${(s.earnings?.toFixed(2) ?? '0.00')}</td>
               <td className="px-4 py-2 border-b flex gap-2 justify-center">
                 <button
                   className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
