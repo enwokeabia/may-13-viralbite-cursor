@@ -37,19 +37,30 @@ export default function InfluencerSummaryCards() {
   if (error) return <div className="text-center text-red-500 py-4">{error}</div>;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
-      <div className="bg-white rounded shadow p-6 flex flex-col items-center h-28 justify-center">
-        <div className="text-2xl font-bold text-purple-700">{activeCount}</div>
-        <div className="text-xs text-gray-500 mt-1">Active Submissions</div>
-      </div>
-      <div className="bg-white rounded shadow p-6 flex flex-col items-center h-28 justify-center">
-        <div className="text-2xl font-bold text-purple-700">{totalViews}</div>
-        <div className="text-xs text-gray-500 mt-1">Total Views</div>
-      </div>
-      <div className="bg-white rounded shadow p-6 flex flex-col items-center h-28 justify-center">
-        <div className="text-2xl font-bold text-purple-700">${totalEarnings.toFixed(2)}</div>
-        <div className="text-xs text-gray-500 mt-1">Total Earnings</div>
-      </div>
-    </div>
+    <>
+      {/* Existing loading, error, and summary cards UI */}
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-6"><div className="bg-gray-100 rounded p-6 h-24 animate-pulse" /><div className="bg-gray-100 rounded p-6 h-24 animate-pulse" /><div className="bg-gray-100 rounded p-6 h-24 animate-pulse" /></div>
+      ) : !userId ? (
+        <div className="text-center text-red-500 py-4">Please log in to view your dashboard.</div>
+      ) : error ? (
+        <div className="text-center text-red-500 py-4">{error}</div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
+          <div className="bg-white rounded shadow p-6 flex flex-col items-center h-28 justify-center">
+            <div className="text-2xl font-bold text-purple-700">{activeCount}</div>
+            <div className="text-xs text-gray-500 mt-1">Active Submissions</div>
+          </div>
+          <div className="bg-white rounded shadow p-6 flex flex-col items-center h-28 justify-center">
+            <div className="text-2xl font-bold text-purple-700">{totalViews}</div>
+            <div className="text-xs text-gray-500 mt-1">Total Views</div>
+          </div>
+          <div className="bg-white rounded shadow p-6 flex flex-col items-center h-28 justify-center">
+            <div className="text-2xl font-bold text-purple-700">${totalEarnings.toFixed(2)}</div>
+            <div className="text-xs text-gray-500 mt-1">Total Earnings</div>
+          </div>
+        </div>
+      )}
+    </>
   );
 } 

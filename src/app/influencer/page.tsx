@@ -64,21 +64,7 @@ export default function InfluencerDashboard() {
           </div>
         </div>
         <div className="w-full max-w-5xl mx-auto px-4 md:px-8">
-          {/* Metric Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6 mb-8">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col justify-between">
-              <span className="uppercase text-xs text-gray-500 font-medium mb-2 tracking-wider">Active Submissions</span>
-              <span className="text-2xl font-semibold text-purple-700 mb-1">{submissions.filter(s => s.status === 'approved' || s.status === 'submitted' || s.status === 'pending').length}</span>
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col justify-between">
-              <span className="uppercase text-xs text-gray-500 font-medium mb-2 tracking-wider">Total Views</span>
-              <span className="text-2xl font-semibold text-purple-700 mb-1">{submissions.reduce((sum, s) => sum + (s.metrics?.views ?? 0), 0)}</span>
-            </div>
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col justify-between">
-              <span className="uppercase text-xs text-gray-500 font-medium mb-2 tracking-wider">Total Earnings</span>
-              <span className="text-2xl font-semibold text-purple-700 mb-1">${submissions.reduce((sum, s) => sum + getEarnings(s), 0).toFixed(2)}</span>
-            </div>
-          </div>
+          <InfluencerSummaryCards />
           {/* Top Content & Opportunities */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
             {/* Your Top Content */}
