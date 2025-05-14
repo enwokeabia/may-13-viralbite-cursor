@@ -47,17 +47,19 @@ export default function InfluencerSummaryCards() {
         <div className="text-center text-red-500 py-4">{error}</div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
-          <div className="bg-white rounded shadow p-6 flex flex-col items-center h-28 justify-center">
-            <div className="text-2xl font-bold text-purple-700">{activeCount}</div>
-            <div className="text-xs text-gray-500 mt-1">Active Submissions</div>
+          <div className="bg-white rounded shadow p-6 flex flex-col items-start h-28 justify-center border border-gray-200">
+            <div className="text-sm text-gray-700 mb-1">Total Earnings</div>
+            <div className="text-2xl font-bold text-black">${totalEarnings.toFixed(2)}</div>
+            <div className="text-xs text-gray-400 mt-1">Based on your submissions</div>
           </div>
-          <div className="bg-white rounded shadow p-6 flex flex-col items-center h-28 justify-center">
-            <div className="text-2xl font-bold text-purple-700">{totalViews}</div>
-            <div className="text-xs text-gray-500 mt-1">Total Views</div>
+          <div className="bg-white rounded shadow p-6 flex flex-col items-start h-28 justify-center border border-gray-200">
+            <div className="text-sm text-gray-700 mb-1">Total Views</div>
+            <div className="text-2xl font-bold text-black">{totalViews}</div>
+            <div className="text-xs text-gray-400 mt-1">Across all your videos</div>
           </div>
-          <div className="bg-white rounded shadow p-6 flex flex-col items-center h-28 justify-center">
-            <div className="text-2xl font-bold text-purple-700">${totalEarnings.toFixed(2)}</div>
-            <div className="text-xs text-gray-500 mt-1">Total Earnings</div>
+          <div className="bg-white rounded shadow p-6 flex flex-col items-start h-28 justify-center border border-gray-200">
+            <div className="text-2xl font-bold text-black">{activeCount}</div>
+            <div className="text-xs text-gray-400 mt-1">Active Submissions</div>
           </div>
         </div>
       )}
