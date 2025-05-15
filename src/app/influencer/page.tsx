@@ -57,8 +57,8 @@ export default function InfluencerDashboard() {
       <div className="hidden md:block w-0.5 bg-gray-200" />
       <main className="flex-1 flex flex-col items-center">
         {/* Soft header */}
-        <div className="w-full bg-gray-100/80 border-b border-gray-200 px-0 md:px-0">
-          <div className="max-w-5xl mx-auto px-4 md:px-8 pt-8 pb-4">
+        <div className="w-full bg-gray-50 px-0 md:px-0 pt-8 pb-4">
+          <div className="max-w-5xl mx-auto px-4 md:px-8">
             <h1 className="text-2xl md:text-3xl font-bold text-black tracking-tight mb-1">Dashboard</h1>
             <p className="text-gray-500 text-base mb-2">Track your performance and earnings</p>
           </div>

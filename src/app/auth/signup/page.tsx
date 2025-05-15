@@ -129,10 +129,10 @@ export default function SignupPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50">
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-white to-purple-100 py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-5xl mx-auto flex flex-col md:flex-row items-center justify-center gap-8 py-8">
         {/* Left: Auth Card */}
-        <div className="w-full md:w-1/2 bg-white rounded-2xl shadow-xl p-8 flex flex-col justify-center">
+        <div className="w-full md:w-1/2 bg-white rounded-2xl shadow-xl p-8 flex flex-col justify-center mx-4 sm:mx-8 min-h-[420px]">
           <h1 className="text-4xl font-extrabold text-purple-700 text-center mb-1">ViralBite</h1>
           <p className="text-center text-gray-500 mb-6">Performance-Based Restaurant-Influencer Marketing</p>
           {showLogin ? (

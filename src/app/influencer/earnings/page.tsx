@@ -6,7 +6,7 @@ import { auth } from "@/lib/firebase/firebase";
 import { where } from "firebase/firestore";
 import { getCampaigns, Campaign } from "@/lib/firebase/firebaseUtils";
 
-export default function SubmissionsPage() {
+export default function EarningsPage() {
   const [userId, setUserId] = useState<string | null>(null);
   const [campaignMap, setCampaignMap] = useState<Record<string, string>>({});
 
@@ -31,10 +31,16 @@ export default function SubmissionsPage() {
     userId ? [where("influencerId", "==", userId)] : []
   );
 
+  // Calculate total earnings
+  const totalEarnings = submissions.reduce((sum, sub) => sum + (sub.earnings ?? 0), 0);
+
   return (
     <main className="min-h-screen flex flex-col items-center bg-gray-50">
       <div className="w-full max-w-3xl mx-auto p-4 md:p-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-black mb-2">Your Submissions</h1>
+        <div className="mb-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-black">Earnings</h1>
+        </div>
+        <div className="mb-6 text-lg font-semibold text-gray-700">Total Earnings: <span className="text-green-600">${totalEarnings.toFixed(2)}</span></div>
         <p className="text-gray-600 mb-6">Track your campaign submissions, approval status, and performance.</p>
         {loading && <div className="text-gray-400">Loading submissions...</div>}
         {error && <div className="text-red-500">{error}</div>}
@@ -56,6 +62,7 @@ export default function SubmissionsPage() {
               {sub.likes && (
                 <div className="text-xs text-gray-400">Likes: {sub.likes}</div>
               )}
+              <div className="text-xs text-green-600 font-semibold">Earnings: ${sub.earnings?.toFixed(2) ?? '0.00'}</div>
             </li>
           ))}
         </ul>

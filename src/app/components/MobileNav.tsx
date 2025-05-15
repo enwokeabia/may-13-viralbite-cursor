@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { HomeIcon, MegaphoneIcon, DocumentTextIcon, EnvelopeIcon, ChartBarIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
+import { HomeIcon, MegaphoneIcon, CurrencyDollarIcon, UserIcon } from '@heroicons/react/24/outline';
 
 const navItems = [
   {
@@ -12,19 +12,19 @@ const navItems = [
     icon: HomeIcon,
   },
   {
-    href: "/influencer/campaigns",
-    label: "Campaigns",
+    href: "/influencer/restaurants",
+    label: "Restaurants",
     icon: MegaphoneIcon,
   },
   {
-    href: "/influencer/submissions",
-    label: "Submissions",
-    icon: DocumentTextIcon,
+    href: "/influencer/earnings",
+    label: "Earnings",
+    icon: CurrencyDollarIcon,
   },
   {
-    href: "/influencer/analytics",
-    label: "Earnings",
-    icon: ChartBarIcon,
+    href: "/influencer/profile",
+    label: "Profile",
+    icon: UserIcon,
   },
 ];
 

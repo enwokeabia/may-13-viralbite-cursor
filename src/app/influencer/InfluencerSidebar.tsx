@@ -4,15 +4,14 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/contexts/AuthContext";
 import { useMemo } from "react";
-import { HomeIcon, MegaphoneIcon, DocumentTextIcon, EnvelopeIcon, ChartBarIcon, Cog6ToothIcon, ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
+import { HomeIcon, MegaphoneIcon, EnvelopeIcon, CurrencyDollarIcon, UserIcon, ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
 
 const navLinks = [
   { href: "/influencer", label: "Dashboard", icon: HomeIcon },
-  { href: "/influencer/campaigns", label: "Browse Campaigns", icon: MegaphoneIcon },
-  { href: "/influencer/submissions", label: "Submissions", icon: DocumentTextIcon },
+  { href: "/influencer/restaurants", label: "Browse Restaurants", icon: MegaphoneIcon },
   { href: "/influencer/invitations", label: "Private Invitations", icon: EnvelopeIcon },
-  { href: "/influencer/analytics", label: "Earnings & Stats", icon: ChartBarIcon },
-  { href: "/influencer/settings", label: "Settings", icon: Cog6ToothIcon },
+  { href: "/influencer/earnings", label: "Earnings", icon: CurrencyDollarIcon },
+  { href: "/influencer/profile", label: "Profile", icon: UserIcon },
 ];
 
 export default function InfluencerSidebar() {
