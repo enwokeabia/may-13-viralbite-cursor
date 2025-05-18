@@ -248,10 +248,11 @@ export default function CampaignForm({ onCreated }: { onCreated?: () => void }) 
       <label className="text-sm font-medium text-purple-700">Description of Campaign</label>
       <textarea
         placeholder="Describe your campaign..."
-        className="border rounded px-3 py-2 text-gray-900"
+        className="border rounded px-3 py-2 text-gray-900 w-full min-h-[80px]"
         value={description}
         onChange={e => setDescription(e.target.value)}
         required
+        rows={3}
       />
 
       <label className="text-sm font-medium text-purple-700">Address</label>

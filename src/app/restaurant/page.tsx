@@ -11,6 +11,7 @@ export default function RestaurantDashboard() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
   const [campaignMap, setCampaignMap] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const unsub = auth.onAuthStateChanged((user) => {
@@ -29,6 +30,7 @@ export default function RestaurantDashboard() {
         if (c.id) map[c.id] = c.title;
       });
       setCampaignMap(map);
+      setLoading(false);
     });
   }, [userId]);
 
@@ -36,7 +38,7 @@ export default function RestaurantDashboard() {
   const campaignIds = campaigns.map((c) => c.id).filter(Boolean);
 
   // Real-time submissions for these campaigns
-  const { submissions, loading, error } = useSubmissions(
+  const { submissions, loading: submissionsLoading, error } = useSubmissions(
     campaignIds.length > 0 ? [where("campaignId", "in", campaignIds)] : []
   );
 
@@ -57,47 +59,55 @@ export default function RestaurantDashboard() {
           <p className="text-gray-500 text-base text-left">Overview of your campaigns and performance</p>
         </div>
         {/* Stats Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-10">
-          <div className="bg-white rounded-xl shadow-sm p-6 flex flex-col items-start justify-between min-h-[110px]">
-            <span className="text-sm text-gray-500 font-medium mb-2">Active Campaigns</span>
-            <div className="flex items-center gap-2">
-              <span className="text-3xl font-bold text-purple-700">{activeCampaigns}</span>
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-10">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="bg-gray-100 rounded-xl p-4 sm:p-6 h-[110px] animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-10">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full p-4 sm:p-6 flex flex-col items-start justify-between min-h-[110px]">
+              <span className="text-sm text-gray-500 font-medium mb-2">Active Campaigns</span>
+              <div className="flex items-center gap-2">
+                <span className="text-3xl font-bold text-purple-700">{activeCampaigns}</span>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full p-4 sm:p-6 flex flex-col items-start justify-between min-h-[110px]">
+              <span className="text-sm text-gray-500 font-medium mb-2">Total Submissions</span>
+              <div className="flex items-center gap-2">
+                <span className="text-3xl font-bold text-purple-700">{totalSubmissions}</span>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full p-4 sm:p-6 flex flex-col items-start justify-between min-h-[110px]">
+              <span className="text-sm text-gray-500 font-medium mb-2">Total Views</span>
+              <div className="flex items-center gap-2">
+                <span className="text-3xl font-bold text-purple-700">{totalViews}</span>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full p-4 sm:p-6 flex flex-col items-start justify-between min-h-[110px]">
+              <span className="text-sm text-gray-500 font-medium mb-2">Total Likes</span>
+              <div className="flex items-center gap-2">
+                <span className="text-3xl font-bold text-purple-700">{totalLikes}</span>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 w-full p-4 sm:p-6 flex flex-col items-start justify-between min-h-[110px]">
+              <span className="text-sm text-gray-500 font-medium mb-2">Total Spent</span>
+              <div className="flex items-center gap-2">
+                <span className="text-3xl font-bold text-purple-700">${totalSpent.toFixed(2)}</span>
+              </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl shadow-sm p-6 flex flex-col items-start justify-between min-h-[110px]">
-            <span className="text-sm text-gray-500 font-medium mb-2">Total Submissions</span>
-            <div className="flex items-center gap-2">
-              <span className="text-3xl font-bold text-purple-700">{totalSubmissions}</span>
-            </div>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm p-6 flex flex-col items-start justify-between min-h-[110px]">
-            <span className="text-sm text-gray-500 font-medium mb-2">Total Views</span>
-            <div className="flex items-center gap-2">
-              <span className="text-3xl font-bold text-purple-700">{totalViews}</span>
-            </div>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm p-6 flex flex-col items-start justify-between min-h-[110px]">
-            <span className="text-sm text-gray-500 font-medium mb-2">Total Likes</span>
-            <div className="flex items-center gap-2">
-              <span className="text-3xl font-bold text-purple-700">{totalLikes}</span>
-            </div>
-          </div>
-          <div className="bg-white rounded-xl shadow-sm p-6 flex flex-col items-start justify-between min-h-[110px]">
-            <span className="text-sm text-gray-500 font-medium mb-2">Total Spent</span>
-            <div className="flex items-center gap-2">
-              <span className="text-3xl font-bold text-purple-700">${totalSpent.toFixed(2)}</span>
-            </div>
-          </div>
-        </div>
+        )}
         {/* Recent Submissions Section */}
         <div className="bg-white rounded-xl shadow-sm p-6 mt-8 border border-gray-100">
           <h2 className="text-lg font-semibold mb-4 text-gray-900 text-left">Recent Submissions</h2>
-          {loading && <div className="text-gray-500">Loading submissions...</div>}
+          {submissionsLoading && <div className="text-gray-500">Loading submissions...</div>}
           {error && <div className="text-red-500">{error}</div>}
-          {!loading && submissions.length === 0 && (
+          {!submissionsLoading && submissions.length === 0 && (
             <div className="text-gray-400">No submissions yet</div>
           )}
-          {!loading && submissions.length > 0 && (
+          {!submissionsLoading && submissions.length > 0 && (
             <div className="overflow-x-auto">
               <table className="min-w-full text-sm">
                 <thead>

@@ -41,7 +41,7 @@ export default function RestaurantSummaryCards() {
   if (error) return <div className="text-center text-red-500 py-4">{error}</div>;
 
   return (
-    <div className="flex flex-wrap gap-4 my-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-6">
       <div className="bg-white rounded shadow p-6 w-48 flex flex-col items-center">
         <div className="text-2xl font-bold text-indigo-700">{activeCampaigns}</div>
         <div className="text-xs text-gray-500 mt-1">Active Campaigns</div>

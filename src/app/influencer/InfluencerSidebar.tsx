@@ -63,15 +63,15 @@ export default function InfluencerSidebar() {
               </Link>
             );
           })}
+          <button
+            onClick={handleSignOut}
+            className="flex items-center gap-3 px-4 py-2 rounded-l-lg font-medium transition-colors w-full text-gray-500 hover:text-purple-700 hover:bg-purple-50 mt-2"
+          >
+            <ArrowLeftOnRectangleIcon className="h-5 w-5" />
+            <span className="text-sm">Sign Out</span>
+          </button>
         </nav>
       </div>
-      <button
-        onClick={handleSignOut}
-        className="flex items-center gap-2 text-gray-500 hover:text-purple-700 px-2 py-2 rounded transition-colors text-sm"
-      >
-        <ArrowLeftOnRectangleIcon className="h-5 w-5" />
-        Logout
-      </button>
     </aside>
   );
 } 

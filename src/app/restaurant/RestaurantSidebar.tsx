@@ -15,7 +15,7 @@ const navLinks = [
   { href: "/restaurant/settings", label: "Settings", icon: Cog6ToothIcon },
 ];
 
-export default function RestaurantSidebar() {
+export default function RestaurantSidebar({ onClose }: { onClose?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, signOut } = useAuth();
@@ -35,9 +35,9 @@ export default function RestaurantSidebar() {
   };
 
   return (
-    <aside className="h-full w-64 bg-white border-r flex flex-col py-8 px-6 justify-between">
+    <aside className="h-full bg-white border-r flex flex-col py-8 px-6 justify-between w-64">
       <div>
-        <h2 className="text-2xl font-bold text-purple-700 mb-8 tracking-tight">ViralBite</h2>
+        <h2 className="text-2xl font-bold text-purple-700 tracking-tight mb-8">ViralBite</h2>
         <div className="flex flex-col items-start mb-8">
           {photoURL ? (
             <img src={photoURL} alt="avatar" className="w-12 h-12 rounded-full object-cover mb-2 border-2 border-purple-200" />
@@ -55,8 +55,9 @@ export default function RestaurantSidebar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`flex items-center gap-3 px-4 py-2 rounded-l-lg font-medium transition-colors w-full
-                  ${active ? "bg-purple-50 text-purple-700 font-semibold border-l-4 border-purple-600" : "text-gray-700 hover:bg-purple-50"}
+                onClick={onClose}
+                className={`flex items-center gap-3 px-4 py-2 rounded-lg font-medium transition-colors
+                  ${active ? "bg-purple-50 text-purple-700 font-semibold" : "text-gray-700 hover:bg-purple-50"}
                 `}
               >
                 <Icon className={`h-5 w-5 ${active ? "text-purple-600" : "text-gray-400"}`} />
@@ -64,15 +65,18 @@ export default function RestaurantSidebar() {
               </Link>
             );
           })}
+          <button
+            onClick={async () => {
+              await handleSignOut();
+              if (onClose) onClose();
+            }}
+            className="flex items-center gap-3 px-4 py-2 rounded-lg font-medium transition-colors w-full text-gray-500 hover:text-purple-700 hover:bg-purple-50 mt-2"
+          >
+            <ArrowLeftOnRectangleIcon className="h-5 w-5" />
+            <span className="text-sm">Sign Out</span>
+          </button>
         </nav>
       </div>
-      <button
-        onClick={handleSignOut}
-        className="flex items-center gap-2 text-gray-500 hover:text-purple-700 px-2 py-2 rounded transition-colors text-sm"
-      >
-        <ArrowLeftOnRectangleIcon className="h-5 w-5" />
-        Logout
-      </button>
     </aside>
   );
 } 
