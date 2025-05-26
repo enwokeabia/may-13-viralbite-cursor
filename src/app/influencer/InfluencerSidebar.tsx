@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/lib/contexts/AuthContext";
-import { useMemo } from "react";
-import { HomeIcon, MegaphoneIcon, DocumentTextIcon, EnvelopeIcon, ChartBarIcon, Cog6ToothIcon, ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline';
+import { useMemo, useState, useEffect } from "react";
+import { HomeIcon, BuildingStorefrontIcon, DocumentTextIcon, EnvelopeIcon, ChartBarIcon, Cog6ToothIcon, ArrowLeftOnRectangleIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 
 const navLinks = [
   { href: "/influencer", label: "Dashboard", icon: HomeIcon },
-  { href: "/influencer/campaigns", label: "Browse Campaigns", icon: MegaphoneIcon },
+  { href: "/influencer/restaurants", label: "Restaurants", icon: BuildingStorefrontIcon },
   { href: "/influencer/submissions", label: "Submissions", icon: DocumentTextIcon },
   { href: "/influencer/invitations", label: "Private Invitations", icon: EnvelopeIcon },
   { href: "/influencer/analytics", label: "Earnings & Stats", icon: ChartBarIcon },
@@ -19,6 +19,18 @@ export default function InfluencerSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, signOut } = useAuth();
+  const [open, setOpen] = useState(false);
+
+  // Close drawer on route change
+  useEffect(() => { setOpen(false); }, [pathname]);
+
+  // ESC to close
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open]);
 
   // Get display name, email, photoURL
   const displayName = user?.displayName || user?.email || "User";
@@ -34,8 +46,9 @@ export default function InfluencerSidebar() {
     router.push("/");
   };
 
-  return (
-    <aside className="h-full w-64 bg-white border-r flex flex-col py-8 px-6 justify-between">
+  // Sidebar content
+  const sidebarContent = (
+    <div className="h-full w-64 flex flex-col py-8 px-6 justify-between">
       <div>
         <h2 className="text-2xl font-bold text-purple-700 mb-8 tracking-tight">ViralBite</h2>
         <div className="flex flex-col items-start mb-8">
@@ -73,6 +86,52 @@ export default function InfluencerSidebar() {
         <ArrowLeftOnRectangleIcon className="h-5 w-5" />
         Logout
       </button>
-    </aside>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Top bar for mobile/tablet */}
+      <div className="w-full bg-gray-100/80 border-b border-gray-200 px-0 md:hidden flex items-center h-14 fixed top-0 left-0 z-[101]">
+        <button
+          className="ml-4 bg-white rounded-full p-2 shadow border border-gray-200"
+          onClick={() => setOpen(true)}
+          aria-label="Open menu"
+          type="button"
+        >
+          <Bars3Icon className="h-6 w-6 text-purple-700" />
+        </button>
+        <span className="ml-4 text-xl font-bold text-purple-700 tracking-tight">ViralBite</span>
+      </div>
+
+      {/* Sidebar for desktop/tablet */}
+      <aside className="hidden md:flex h-full w-64 bg-white border-r flex-col py-8 px-6 justify-between">
+        {sidebarContent}
+      </aside>
+
+      {/* Drawer for mobile */}
+      {open && (
+        <>
+          {/* Overlay */}
+          <div
+            className="fixed inset-0 bg-black/30 z-[100] transition-opacity"
+            onClick={() => setOpen(false)}
+            aria-label="Close menu overlay"
+          />
+          {/* Drawer */}
+          <aside className="fixed top-0 left-0 h-full w-64 bg-white border-r z-[101] shadow-lg flex flex-col transition-transform duration-200">
+            <button
+              className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100"
+              onClick={() => setOpen(false)}
+              aria-label="Close menu"
+              type="button"
+            >
+              <XMarkIcon className="h-6 w-6 text-purple-700" />
+            </button>
+            {sidebarContent}
+          </aside>
+        </>
+      )}
+    </>
   );
 } 
